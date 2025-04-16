@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File Builder</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      margin: 0;
+      height: 100vh;
+    }
+    .sidebar {
+      width: 180px;
+      background-color: #f4f4f4;
+      padding: 20px;
+      border-right: 1px solid #ccc;
+    }
+    .content {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .form-section {
+      margin-bottom: 10px;
+      border: 1px solid #ddd;
+      padding: 10px;
+      border-radius: 5px;
+    }
+    .form-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .form-row input, .form-row select {
+      flex: 1;
+      min-width: 100px;
+      padding: 6px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .form-row input[readonly] {
+      background-color: #f9f9f9;
+    }
+    .form-row input.totalInvoice {
+      background-color: #d4edda;
+      font-weight: bold;
+      border-color: #28a745;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+<script>
+function addBlock(type) {
+  const container = document.getElementById('formContainer');
+  const block = document.createElement('div');
+  block.className = 'form-section';
+
+  const dropdowns = {
+    Hotel: ['Single', 'Double', 'Twin', 'Suite', 'Family', 'Deluxe', 'Superior'],
+    Restaurant: ['Single Course Meal', '2-Course Menu', '3-Course Menu', '4-Course Menu', 'Wine/Alcohol Pairing'],
+    Transport: ['Airport Transfers (Private or Shared)', 'City-to-City Transport (Bus, Train, Ferry, Flights)', 'Chauffeur/Driver Services', 'Car/Van/Bus Rentals with Driver', 'Luggage Handling'],
+    Service: ['Travel Insurance', 'Local SIM Card / Wi-Fi Rental', '24/7 Support Hotline', 'Tour Guide Services (Multilingual)', 'Itinerary Planning & Customization'],
+    Activity: ['🧗 Adventure Activities', 'Ziplining / Bungee Jumping', 'ATV/Jeep Safaris', 'Rock Climbing', 'Paragliding / Hot Air Ballooning', 'Surfing / White Water Rafting', '🧘 Wellness & Relaxation', 'Spa Days & Thermal Bath Entry', 'Yoga & Meditation Sessions', 'Wellness Retreat Packages', 'Sauna / Hammam Experiences', '🎟️ Sightseeing & Cultural Activities', 'City Tours (Walking, Bus, Bike, Segway)', 'Museum & Gallery Visits', 'Historical Site Tours', 'Cultural Performances (Dance, Music, Theatre)', 'Local Village Visits', '🏞️ Outdoor & Nature Activities', 'National Park Entry & Guided Hikes', 'Wildlife Safaris or Bird Watching', 'Snorkeling, Diving, Whale Watching', 'Boat Tours / Cruises / Kayaking', 'Skiing, Snowboarding, Dog Sledding']
+  };
+
+  const placeholder = {
+    Hotel: 'Hotel Name',
+    Restaurant: 'Restaurant Name',
+    Transport: 'Transport Service',
+    Service: 'Service Name',
+    Activity: 'Activity Name'
+  }[type];
+
+  const label = {
+    Hotel: 'Room Type',
+    Restaurant: 'Meal Type',
+    Transport: 'Transport Type',
+    Service: 'Liberty Services',
+    Activity: 'Activity Type'
+  }[type];
+
+  const options = dropdowns[type].map(opt => {
+    const isHeader = /🧗|🧘|🎟️|🏞️/.test(opt);
+    return `<option value="${isHeader ? '' : opt}" ${isHeader ? 'disabled' : ''}>${opt}</option>`;
+  }).join('');
+
+  block.innerHTML = `
+    <div style="position: relative;">
+      <span onclick="this.closest('.form-section').remove()" style="position: absolute; top: -10px; right: -10px; background: #dc3545; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: bold;">&times;</span>
+      <div class="form-row">
+        <input type="text" placeholder="${placeholder}">
+        <select><option value="">Select ${label}</option>${options}</select>
+        <input type="number" value="1" min="0" class="nights" placeholder="Nights" oninput="calculateMarkup(this)">
+        <input type="number" value="1" min="1" class="units" placeholder="Units" oninput="calculateMarkup(this)">
+        <input type="number" value="0" min="0" class="price" step="0.01" placeholder="Price/Unit" oninput="calculateMarkup(this)">
+        <input type="number" value="30" step="1" class="markup" placeholder="Markup %" oninput="calculateMarkup(this)">
+        <input type="text" readonly class="markupTotal" placeholder="Cost + Markup">
+        <input type="text" readonly class="profitMargin" placeholder="Profit %">
+        <input type="text" readonly class="totalInvoice" placeholder="Total to be invoiced">
+        <input type="text" readonly class="marginValue" placeholder="Margin Value">
+      </div>
+    </div>`;
+
+  container.appendChild(block);
+}
+function calculateMarkup(input) {
+  const section = input.closest('.form-section');
+  const price = parseFloat(section.querySelector('.price')?.value);
+  const markupPercent = parseFloat(section.querySelector('.markup')?.value);
+  const nights = parseFloat(section.querySelector('.nights')?.value);
+  const units = parseFloat(section.querySelector('.units')?.value);
+  const markupTotalField = section.querySelector('.markupTotal');
+  const profitMarginField = section.querySelector('.profitMargin');
+  const totalInvoiceField = section.querySelector('.totalInvoice');
+  const marginValueField = section.querySelector('.marginValue');
+
+  if (!isNaN(price) && !isNaN(markupPercent) && !isNaN(nights) && !isNaN(units)) {
+    const markup = markupPercent / 100;
+    const total = price * (1 + markup);
+    const profitMargin = (total - price) / total;
+    const totalInvoiced = nights * units * total;
+    const marginValue = totalInvoiced - (nights * units * price);
+
+    markupTotalField.value = total.toFixed(2);
+    profitMarginField.value = (profitMargin * 100).toFixed(1) + '%';
+    totalInvoiceField.value = totalInvoiced.toFixed(2);
+    marginValueField.value = marginValue.toFixed(2);
+  } else {
+    markupTotalField.value = '';
+    profitMarginField.value = '';
+    totalInvoiceField.value = '';
+    marginValueField.value = '';
+  }
+}
+</script>
+</head>
+<body>
+  <div class="sidebar">
+    <div onclick="exportAllSectionsToPDF()" style="cursor: pointer; margin-bottom: 10px; font-weight: bold; color: #28a745;">📄 Export All to PDF</div>
+        <div onclick="addBlock('Hotel')" style="cursor: pointer; margin-bottom: 10px; font-weight: bold; color: #007BFF;">+ Hotel</div>
+    <div onclick="addBlock('Restaurant')" style="cursor: pointer; margin-bottom: 10px; font-weight: bold; color: #007BFF;">+ Restaurant</div>
+    <div onclick="addBlock('Activity')" style="cursor: pointer; margin-bottom: 10px; font-weight: bold; color: #007BFF;">+ Activity</div>
+    <div onclick="addBlock('Service')" style="cursor: pointer; margin-bottom: 10px; font-weight: bold; color: #007BFF;">+ Liberty Services</div>
+    <div onclick="addBlock('Transport')" style="cursor: pointer; margin-bottom: 10px; font-weight: bold; color: #007BFF;">+ Transport</div>
+    <div onclick="addDivider()" style="cursor: pointer; margin-bottom: 10px; font-weight: bold; color: #28a745;">+ Divider</div>
+    <div onclick="addDateRow()" style="cursor: pointer; margin-bottom: 10px; font-weight: bold; color: #6f42c1;">+ Date Label</div>
+  </div>
+  <div class="content" id="formContainer">
+    <div class="form-row" style="margin-bottom: 20px;"><input type="text" placeholder="Enter File Number" style="font-size: 1.5em; padding: 10px; width: 100%;"></div>
+  </div>
+<script>
+function addDivider() {
+  const container = document.getElementById('formContainer');
+  const wrapper = document.createElement('div');
+  wrapper.className = 'form-section';
+  wrapper.innerHTML = `
+    <div style="position: relative;">
+      <span onclick="this.closest('.form-section').remove()" style="position: absolute; top: -10px; right: -10px; background: #dc3545; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: bold;">&times;</span>
+      <hr style="margin: 0; border: none; border-top: 1px solid #ccc;">
+    </div>
+  `;
+  container.appendChild(wrapper);
+}
+
+function addDateRow() {
+  const container = document.getElementById('formContainer');
+  const wrapper = document.createElement('div');
+  wrapper.className = 'form-section';
+  wrapper.innerHTML = `
+    <div style="position: relative;">
+      <span onclick="this.closest('.form-section').remove()" style="position: absolute; top: -10px; right: -10px; background: #dc3545; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: bold;">&times;</span>
+      <div class="form-row">
+        <input type="date" onchange="convertDateToLabel(this)" style="flex: 0 0 auto; max-width: 200px; font-weight: bold;">
+      </div>
+    </div>
+  `;
+  container.appendChild(wrapper);
+}
+
+function convertDateToLabel(input) {
+  const date = new Date(input.value);
+  if (!isNaN(date)) {
+    const options = { day: 'numeric', month: 'long', year: 'numeric' };
+    const formatted = date.toLocaleDateString('en-GB', options);
+    const section = input.closest('.form-section');
+    section.innerHTML = `
+      <div style="position: relative;">
+        <span onclick="this.closest('.form-section').remove()" style="position: absolute; top: -10px; right: -10px; background: #dc3545; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: bold;">&times;</span>
+        <div class="form-row">
+          <strong style='font-size: 1.2em;'>${formatted}</strong>
+        </div>
+      </div>
+    `;
+  }
+}
+
+function exportAllSectionsToPDF() {
+  function determineType(placeholder) {
+    if (placeholder.includes('Hotel')) return 'Hotel';
+    if (placeholder.includes('Restaurant')) return 'Restaurant';
+    if (placeholder.includes('Activity')) return 'Activity';
+    if (placeholder.includes('Service')) return 'Liberty Service';
+    if (placeholder.includes('Transport')) return 'Transport';
+    return '';
+  }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  const fileNumber = document.querySelector("input[placeholder='Enter File Number']")?.value.trim() || 'program';
+  const types = [
+    { label: 'Hotels', match: 'Hotel Name' },
+    { label: 'Restaurants', match: 'Restaurant Name' },
+    { label: 'Activities', match: 'Activity Name' },
+    { label: 'Liberty Services', match: 'Service Name' },
+    { label: 'Transport', match: 'Transport Service' }
+  ];
+
+  let y = 20;
+let lastCategory = '';
+
+  document.querySelectorAll('.form-section').forEach(section => {
+    const input = section.querySelector('input');
+    const select = section.querySelector('select');
+    const nights = section.querySelector('.nights')?.value || '';
+    const units = section.querySelector('.units')?.value || '';
+    const price = section.querySelector('.price')?.value || '';
+    const total = section.querySelector('.totalInvoice')?.value || '';
+    const remarks = '';
+
+    if (input && select) {
+      if (lastCategory !== determineType(input.placeholder)) {
+        doc.autoTable({
+        startY: y,
+        body: [[input.value, select.value, nights, units, price, total, remarks]],
+          body: [],
+          styles: { fontSize: 10, cellPadding: 2, overflow: 'linebreak' },
+          theme: 'striped',
+          tableLineColor: 220,
+          tableLineWidth: 0.1,
+          margin: { top: 10 },
+        });
+        y = doc.lastAutoTable.finalY;
+        lastCategory = determineType(input.placeholder);
+      }
+      doc.autoTable({
+        startY: y,
+        head: [[determineType(input.placeholder).toUpperCase(), "TYPE", "NIGHTS", "UNITS", "PRICE/UNIT", "TOTAL", "REMARKS"]],
+        body: [[input.value, select.value, nights, units, price, total, remarks]],
+        styles: { fontSize: 10, cellPadding: 2, overflow: 'linebreak' },
+        theme: 'striped',
+        tableLineColor: 220,
+        tableLineWidth: 0.1,
+        margin: { top: 10 },
+      });
+      y = doc.lastAutoTable.finalY + 4;
+      section.previousIsTable = true;
+    } else if (section.querySelector('strong')) {
+      doc.setFontSize(12);
+      doc.setTextColor(40);
+      doc.setFillColor(240,240,240);
+doc.rect(14, y - 5, 182, 8, 'F');
+doc.setFont(undefined, 'bold');
+doc.text(`${section.querySelector('strong').textContent}`, 16, y);
+doc.setFont(undefined, 'normal');
+      y += 8;
+      section.previousIsTable = false;
+    } else if (section.querySelector('hr')) {
+      doc.setDrawColor(180);
+      doc.line(14, y, 196, y);
+      y += 8;
+      section.previousIsTable = false;
+    }
+  });
+  doc.save(`${fileNumber}.pdf`);
+}
+</script>
+</body>
+</html>
