@@ -10,28 +10,75 @@
       display: flex;
       margin: 0;
       height: 100vh;
+      overflow: hidden;
+      font-size: 14px;
     }
     .sidebar {
       width: 180px;
       background-color: #f4f4f4;
-      padding: 20px;
+      padding: 10px;
       border-right: 1px solid #ccc;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+    .sidebar-main {
+      flex: 1;
+      margin-bottom: 12px;
+    }
+    .sidebar-footer {
+      border-top: 1px solid #ddd;
+      padding-top: 20px;
+      margin-top: auto;
+      padding-bottom: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
     .content {
       flex: 1;
-      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    .header {
+      background-color: #203864;
+      color: white;
+      padding: 10px 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      height: 45px;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 500;
+    }
+    .header i {
+      font-size: 20px;
+    }
+    .main-content {
+      flex: 1;
+      padding: 40px 25px;
       overflow-y: auto;
     }
     .form-section {
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       border: 1px solid #ddd;
-      padding: 10px;
+      padding: 12px;
       border-radius: 5px;
+      background-color: #fff;
     }
     .form-row {
+      margin-bottom: 15px;
       display: flex;
-      flex-wrap: wrap;
+      align-items: center;
       gap: 10px;
+      flex-wrap: wrap;
     }
     .form-row input, .form-row select {
       flex: 1;
@@ -39,241 +86,1052 @@
       padding: 6px;
       border: 1px solid #ccc;
       border-radius: 4px;
+      position: relative;
+      font-size: inherit;
+    }
+    .form-row input[type="number"] {
+      min-width: 80px;
+      max-width: 120px;
     }
     .form-row input[readonly] {
-      background-color: #f9f9f9;
+      max-width: 100px;
+    }
+    .form-row input.price {
+      background-color: #fff3e6;
+      border-color: #ff9933;
+    }
+    .form-row input.price:hover::before {
+      content: "Supplier Price";
+      position: absolute;
+      background: #333;
+      color: white;
+      padding: 5px;
+      border-radius: 3px;
+      font-size: 12px;
+      margin-top: -25px;
     }
     .form-row input.totalInvoice {
-      background-color: #d4edda;
+      background-color: #fff0f7;
+      border-color: #ff00ff;
       font-weight: bold;
+    }
+    .form-row input.totalInvoice:hover::before {
+      content: "Invoice to Client";
+      position: absolute;
+      background: #333;
+      color: white;
+      padding: 5px;
+      border-radius: 3px;
+      font-size: 12px;
+      margin-top: -25px;
+    }
+    .form-row input.marginValue {
+      background-color: #f0fff0;
       border-color: #28a745;
+      font-weight: bold;
+    }
+    .delete-btn {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      color: #dc3545;
+      cursor: pointer;
+      font-size: 20px;
+      font-weight: bold;
+      z-index: 100;
+      text-decoration: none;
+      line-height: 1;
+    }
+    .delete-btn:hover {
+      color: #c82333;
+    }
+    .sidebar-btn {
+      cursor: pointer;
+      margin-bottom: 12px;
+      font-weight: bold;
+      padding: 8px 12px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.2s;
+      font-size: 14px;
+    }
+    .sidebar-btn:hover {
+      background-color: #f8f9fa;
+    }
+    .sidebar-btn i {
+      font-size: 16px;
+      width: 20px;
+      text-align: center;
+    }
+    .sidebar-btn.blue {
+      color: #007BFF;
+    }
+    .sidebar-btn.green {
+      color: #28a745;
+    }
+    .sidebar-btn.purple {
+      color: #6f42c1;
+    }
+    .folder-btn {
+      cursor: pointer;
+      padding: 10px 15px;
+      background-color: #6f42c1;
+      color: white;
+      border-radius: 5px;
+      font-weight: bold;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.2s;
+    }
+    .folder-btn:hover {
+      background-color: #5a32a3;
+    }
+    .folder-btn i {
+      font-size: 16px;
+    }
+    .folder-link {
+      cursor: pointer;
+      color: #6f42c1;
+      font-weight: bold;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      padding: 12px;
+      font-size: 15px;
+      margin-top: 10px;
+    }
+    .folder-link:hover {
+      color: #5a32a3;
+    }
+    .folder-link i {
+      font-size: 16px;
+    }
+    #fileNumber {
+      font-size: 16px;
+      padding: 12px;
+      flex: 1;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      max-width: 300px;
+      margin-top: 10px;
+    }
+    #fileNumber.error {
+      border-color: #dc3545;
+      background-color: #fff8f8;
+    }
+    .error-message {
+      color: #dc3545;
+      font-size: 12px;
+      margin-top: 4px;
+      display: none;
+    }
+    @media (max-width: 1200px) {
+      .form-row {
+        gap: 8px;
+      }
+      .form-row input[type="number"],
+      .form-row input[readonly] {
+        min-width: 70px;
+        max-width: 100px;
+      }
+      .form-row input, .form-row select {
+        padding: 4px 6px;
+      }
+    }
+    @media (max-width: 992px) {
+      body {
+        font-size: 13px;
+      }
+      .sidebar {
+        width: 160px;
+      }
+      .form-row input[type="number"],
+      .form-row input[readonly] {
+        min-width: 60px;
+        max-width: 90px;
+      }
+      .header h1 {
+        font-size: 16px;
+      }
+    }
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+        height: auto;
+        min-height: 100vh;
+      }
+      .sidebar {
+        width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid #ccc;
+      }
+      .sidebar-main {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+      .sidebar-footer {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        padding: 15px 0;
+      }
+      .sidebar-btn {
+        margin-bottom: 0;
+        padding: 10px 15px;
+      }
+      .content {
+        height: auto;
+        min-height: 0;
+        flex: 1;
+      }
+      .main-content {
+        padding: 25px 20px;
+      }
+      .form-section {
+        padding: 12px;
+        margin-bottom: 15px;
+      }
+      .form-row {
+        margin-bottom: 20px;
+        gap: 10px;
+      }
+      .form-row input,
+      .form-row select {
+        min-width: 120px;
+        flex: 1 1 calc(33.33% - 8px);
+      }
+      .form-row input[type="number"],
+      .form-row input[readonly] {
+        min-width: 80px;
+        max-width: none;
+        flex: 1 1 calc(25% - 8px);
+      }
+      #fileNumber {
+        padding: 10px;
+        font-size: 15px;
+        margin-top: 5px;
+      }
+      .folder-link {
+        padding: 10px;
+        font-size: 14px;
+        margin-top: 5px;
+      }
+    }
+    @media (max-width: 480px) {
+      .sidebar-main {
+        flex-direction: column;
+        gap: 4px;
+      }
+      .sidebar-footer {
+        flex-direction: column;
+        padding: 12px 0;
+        gap: 8px;
+      }
+      .sidebar-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 12px;
+      }
+      .form-row input,
+      .form-row select {
+        flex: 1 1 100%;
+        min-width: 0;
+      }
+      .form-row input[type="number"],
+      .form-row input[readonly] {
+        flex: 1 1 calc(50% - 4px);
+      }
+      .main-content {
+        padding: 20px 15px;
+      }
+      .form-section {
+        padding: 10px;
+        margin-bottom: 12px;
+      }
+      .form-row {
+        margin-bottom: 15px;
+        gap: 8px;
+      }
+      .folder-link {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+    .form-header {
+      background-color: #f8f9fa;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 12px;
+      margin-bottom: 15px;
+    }
+    .form-header-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 8px;
+      align-items: center;
+    }
+    .form-header-row:last-child {
+      margin-bottom: 0;
+    }
+    .form-header input,
+    .form-header select,
+    .form-header textarea {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+      font-family: inherit;
+      background-color: white;
+    }
+    #fileNumber {
+      width: 120px;
+    }
+    #destination {
+      width: 150px;
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23666666%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+      background-size: 10px;
+      padding-right: 24px;
+    }
+    #destination optgroup {
+      font-weight: bold;
+      color: #203864;
+    }
+    #destination option {
+      font-weight: normal;
+      color: #333;
+      padding: 4px;
+    }
+    .date-range {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .date-range input {
+      width: 120px;
+      padding: 6px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .date-info {
+      color: #666;
+      font-size: 12px;
+      white-space: nowrap;
+      background-color: #f0f0f0;
+      padding: 4px 8px;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+    }
+    .rooms-section {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .rooms-section input {
+      width: 70px;
+    }
+    #clientContact {
+      flex: 1;
+      min-height: 35px;
+      resize: none;
+    }
+    @media (max-width: 768px) {
+      .form-header-row {
+        flex-wrap: wrap;
+      }
+      .form-header input,
+      .form-header select,
+      .form-header textarea,
+      .date-range,
+      .rooms-section {
+        flex: 1 1 auto;
+      }
+      #clientContact {
+        width: 100%;
+      }
     }
   </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-<script>
-function addBlock(type) {
-  const container = document.getElementById('formContainer');
-  const block = document.createElement('div');
-  block.className = 'form-section';
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script>
+    function addBlock(type) {
+      const container = document.getElementById('formContainer');
+      const block = document.createElement('div');
+      block.className = 'form-section';
 
-  const dropdowns = {
-    Hotel: ['Single', 'Double', 'Twin', 'Suite', 'Family', 'Deluxe', 'Superior'],
-    Restaurant: ['Single Course Meal', '2-Course Menu', '3-Course Menu', '4-Course Menu', 'Wine/Alcohol Pairing'],
-    Transport: ['Airport Transfers (Private or Shared)', 'City-to-City Transport (Bus, Train, Ferry, Flights)', 'Chauffeur/Driver Services', 'Car/Van/Bus Rentals with Driver', 'Luggage Handling'],
-    Service: ['Travel Insurance', 'Local SIM Card / Wi-Fi Rental', '24/7 Support Hotline', 'Tour Guide Services (Multilingual)', 'Itinerary Planning & Customization'],
-    Activity: ['🧗 Adventure Activities', 'Ziplining / Bungee Jumping', 'ATV/Jeep Safaris', 'Rock Climbing', 'Paragliding / Hot Air Ballooning', 'Surfing / White Water Rafting', '🧘 Wellness & Relaxation', 'Spa Days & Thermal Bath Entry', 'Yoga & Meditation Sessions', 'Wellness Retreat Packages', 'Sauna / Hammam Experiences', '🎟️ Sightseeing & Cultural Activities', 'City Tours (Walking, Bus, Bike, Segway)', 'Museum & Gallery Visits', 'Historical Site Tours', 'Cultural Performances (Dance, Music, Theatre)', 'Local Village Visits', '🏞️ Outdoor & Nature Activities', 'National Park Entry & Guided Hikes', 'Wildlife Safaris or Bird Watching', 'Snorkeling, Diving, Whale Watching', 'Boat Tours / Cruises / Kayaking', 'Skiing, Snowboarding, Dog Sledding']
-  };
+      const dropdowns = {
+        Hotel: ['Single', 'Double', 'Twin', 'Suite', 'Family', 'Deluxe', 'Superior'],
+        Restaurant: ['Single Course Meal', '2-Course Menu', '3-Course Menu', '4-Course Menu', 'Wine/Alcohol Pairing'],
+        Transport: ['Airport Transfers (Private or Shared)', 'City-to-City Transport (Bus, Train, Ferry, Flights)', 'Chauffeur/Driver Services', 'Car/Van/Bus Rentals with Driver', 'Luggage Handling'],
+        Service: ['Travel Insurance', 'Local SIM Card / Wi-Fi Rental', '24/7 Support Hotline', 'Tour Guide Services (Multilingual)', 'Itinerary Planning & Customization'],
+        Activity: ['🧗 Adventure Activities', 'Ziplining / Bungee Jumping', 'ATV/Jeep Safaris', 'Rock Climbing', 'Paragliding / Hot Air Ballooning', 'Surfing / White Water Rafting', '🧘 Wellness & Relaxation', 'Spa Days & Thermal Bath Entry', 'Yoga & Meditation Sessions', 'Wellness Retreat Packages', 'Sauna / Hammam Experiences', '🎟️ Sightseeing & Cultural Activities', 'City Tours (Walking, Bus, Bike, Segway)', 'Museum & Gallery Visits', 'Historical Site Tours', 'Cultural Performances (Dance, Music, Theatre)', 'Local Village Visits', '🏞️ Outdoor & Nature Activities', 'National Park Entry & Guided Hikes', 'Wildlife Safaris or Bird Watching', 'Snorkeling, Diving, Whale Watching', 'Boat Tours / Cruises / Kayaking', 'Skiing, Snowboarding, Dog Sledding']
+      };
 
-  const placeholder = {
-    Hotel: 'Hotel Name',
-    Restaurant: 'Restaurant Name',
-    Transport: 'Transport Service',
-    Service: 'Service Name',
-    Activity: 'Activity Name'
-  }[type];
+      const placeholder = {
+        Hotel: 'Hotel Name',
+        Restaurant: 'Restaurant Name',
+        Transport: 'Transport Service',
+        Service: 'Service Name',
+        Activity: 'Activity Name'
+      }[type];
 
-  const label = {
-    Hotel: 'Room Type',
-    Restaurant: 'Meal Type',
-    Transport: 'Transport Type',
-    Service: 'Liberty Services',
-    Activity: 'Activity Type'
-  }[type];
+      const label = {
+        Hotel: 'Room Type',
+        Restaurant: 'Meal Type',
+        Transport: 'Transport Type',
+        Service: 'Liberty Services',
+        Activity: 'Activity Type'
+      }[type];
 
-  const options = dropdowns[type].map(opt => {
-    const isHeader = /🧗|🧘|🎟️|🏞️/.test(opt);
-    return `<option value="${isHeader ? '' : opt}" ${isHeader ? 'disabled' : ''}>${opt}</option>`;
-  }).join('');
+      const options = dropdowns[type].map(opt => {
+        const isHeader = /🧗|🧘|🎟️|🏞️/.test(opt);
+        return `<option value="${isHeader ? '' : opt}" ${isHeader ? 'disabled' : ''}>${opt}</option>`;
+      }).join('');
 
-  block.innerHTML = `
-    <div style="position: relative;">
-      <span onclick="this.closest('.form-section').remove()" style="position: absolute; top: -10px; right: -10px; background: #dc3545; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: bold;">&times;</span>
-      <div class="form-row">
-        <input type="text" placeholder="${placeholder}">
-        <select><option value="">Select ${label}</option>${options}</select>
-        <input type="number" value="1" min="0" class="nights" placeholder="Nights" oninput="calculateMarkup(this)">
-        <input type="number" value="1" min="1" class="units" placeholder="Units" oninput="calculateMarkup(this)">
-        <input type="number" value="0" min="0" class="price" step="0.01" placeholder="Price/Unit" oninput="calculateMarkup(this)">
-        <input type="number" value="30" step="1" class="markup" placeholder="Markup %" oninput="calculateMarkup(this)">
-        <input type="text" readonly class="markupTotal" placeholder="Cost + Markup">
-        <input type="text" readonly class="profitMargin" placeholder="Profit %">
-        <input type="text" readonly class="totalInvoice" placeholder="Total to be invoiced">
-        <input type="text" readonly class="marginValue" placeholder="Margin Value">
-      </div>
-    </div>`;
+      block.innerHTML = `
+        <div style="position: relative;">
+          <span onclick="this.closest('.form-section').remove()" class="delete-btn">&times;</span>
+          <div class="form-row">
+            <input type="text" placeholder="${placeholder}">
+            <select><option value="">Select ${label}</option>${options}</select>
+            <input type="number" value="1" min="0" class="nights" placeholder="Nights" oninput="calculateMarkup(this)">
+            <input type="number" value="1" min="1" class="units" placeholder="Units" oninput="calculateMarkup(this)">
+            <input type="number" value="0" min="0" class="price" step="0.01" placeholder="Price/Unit" oninput="calculateMarkup(this)" title="Supplier Price">
+            <input type="number" value="30" step="1" class="markup" placeholder="Markup %" oninput="calculateMarkup(this)">
+            <input type="text" readonly class="markupTotal" placeholder="Cost + Markup">
+            <input type="text" readonly class="profitMargin" placeholder="Profit %">
+            <input type="text" readonly class="totalInvoice" placeholder="Total Invoiced to Client" title="Invoice to Client">
+            <input type="text" readonly class="marginValue" placeholder="Margin Value">
+            ${type === 'Hotel' ? `<div onclick="addRoomRow(this)" style="cursor: pointer; padding: 5px 10px; background-color: #007BFF; color: white; border-radius: 4px; font-size: 12px; white-space: nowrap;">+ Add Room</div>` : ''}
+          </div>
+        </div>`;
 
-  container.appendChild(block);
-}
-function calculateMarkup(input) {
-  const section = input.closest('.form-section');
-  const price = parseFloat(section.querySelector('.price')?.value);
-  const markupPercent = parseFloat(section.querySelector('.markup')?.value);
-  const nights = parseFloat(section.querySelector('.nights')?.value);
-  const units = parseFloat(section.querySelector('.units')?.value);
-  const markupTotalField = section.querySelector('.markupTotal');
-  const profitMarginField = section.querySelector('.profitMargin');
-  const totalInvoiceField = section.querySelector('.totalInvoice');
-  const marginValueField = section.querySelector('.marginValue');
+      container.appendChild(block);
+    }
 
-  if (!isNaN(price) && !isNaN(markupPercent) && !isNaN(nights) && !isNaN(units)) {
-    const markup = markupPercent / 100;
-    const total = price * (1 + markup);
-    const profitMargin = (total - price) / total;
-    const totalInvoiced = nights * units * total;
-    const marginValue = totalInvoiced - (nights * units * price);
+    function addRoomRow(button) {
+      const parentSection = button.closest('.form-section');
+      const newSection = document.createElement('div');
+      newSection.className = 'form-section room-row';
+      
+      const options = ['Single', 'Double', 'Twin', 'Suite', 'Family', 'Deluxe', 'Superior']
+        .map(opt => `<option value="${opt}">${opt}</option>`).join('');
 
-    markupTotalField.value = total.toFixed(2);
-    profitMarginField.value = (profitMargin * 100).toFixed(1) + '%';
-    totalInvoiceField.value = totalInvoiced.toFixed(2);
-    marginValueField.value = marginValue.toFixed(2);
-  } else {
-    markupTotalField.value = '';
-    profitMarginField.value = '';
-    totalInvoiceField.value = '';
-    marginValueField.value = '';
-  }
-}
-</script>
+      newSection.innerHTML = `
+        <div style="position: relative;">
+          <span onclick="this.closest('.form-section').remove()" class="delete-btn">&times;</span>
+          <div class="form-row" style="padding-left: 20px; border-left: 2px solid #007BFF;">
+            <select><option value="">Select Room Type</option>${options}</select>
+            <input type="number" value="1" min="0" class="nights" placeholder="Nights" oninput="calculateMarkup(this)">
+            <input type="number" value="1" min="1" class="units" placeholder="Units" oninput="calculateMarkup(this)">
+            <input type="number" value="0" min="0" class="price" step="0.01" placeholder="Price/Unit" oninput="calculateMarkup(this)" title="Supplier Price">
+            <input type="number" value="30" step="1" class="markup" placeholder="Markup %" oninput="calculateMarkup(this)">
+            <input type="text" readonly class="markupTotal" placeholder="Cost + Markup">
+            <input type="text" readonly class="profitMargin" placeholder="Profit %">
+            <input type="text" readonly class="totalInvoice" placeholder="Total Invoiced to Client" title="Invoice to Client">
+            <input type="text" readonly class="marginValue" placeholder="Margin Value">
+          </div>
+        </div>`;
+
+      // Insert the new room row after the parent hotel section
+      parentSection.insertAdjacentElement('afterend', newSection);
+    }
+
+    function calculateMarkup(input) {
+      const section = input.closest('.form-section');
+      const price = parseFloat(section.querySelector('.price')?.value);
+      const markupPercent = parseFloat(section.querySelector('.markup')?.value);
+      const nights = parseFloat(section.querySelector('.nights')?.value);
+      const units = parseFloat(section.querySelector('.units')?.value);
+      const markupTotalField = section.querySelector('.markupTotal');
+      const profitMarginField = section.querySelector('.profitMargin');
+      const totalInvoiceField = section.querySelector('.totalInvoice');
+      const marginValueField = section.querySelector('.marginValue');
+
+      if (!isNaN(price) && !isNaN(markupPercent) && !isNaN(nights) && !isNaN(units)) {
+        const markup = markupPercent / 100;
+        const total = price * (1 + markup);
+        const profitMargin = (total - price) / total;
+        const totalInvoiced = nights * units * total;
+        const marginValue = totalInvoiced - (nights * units * price);
+
+        markupTotalField.value = total.toFixed(2);
+        profitMarginField.value = (profitMargin * 100).toFixed(1) + '%';
+        totalInvoiceField.value = totalInvoiced.toFixed(2);
+        marginValueField.value = marginValue.toFixed(2);
+      } else {
+        markupTotalField.value = '';
+        profitMarginField.value = '';
+        totalInvoiceField.value = '';
+        marginValueField.value = '';
+      }
+    }
+
+    function addDivider() {
+      const container = document.getElementById('formContainer');
+      const wrapper = document.createElement('div');
+      wrapper.className = 'form-section';
+      wrapper.innerHTML = `
+        <div style="position: relative;">
+          <span onclick="this.closest('.form-section').remove()" class="delete-btn">&times;</span>
+          <hr style="margin: 0; border: none; border-top: 1px solid #ccc;">
+        </div>
+      `;
+      container.appendChild(wrapper);
+    }
+
+    function addDateRow() {
+      const container = document.getElementById('formContainer');
+      const wrapper = document.createElement('div');
+      wrapper.className = 'form-section';
+      wrapper.innerHTML = `
+        <div style="position: relative;">
+          <span onclick="this.closest('.form-section').remove()" class="delete-btn">&times;</span>
+          <div class="form-row">
+            <input type="date" onchange="convertDateToLabel(this)" style="flex: 0 0 auto; max-width: 200px; font-weight: bold;">
+          </div>
+        </div>
+      `;
+      container.appendChild(wrapper);
+    }
+
+    function convertDateToLabel(input) {
+      const date = new Date(input.value);
+      if (!isNaN(date)) {
+        const options = { day: 'numeric', month: 'long', year: 'numeric' };
+        const formatted = date.toLocaleDateString('en-GB', options);
+        const section = input.closest('.form-section');
+        section.innerHTML = `
+          <div style="position: relative;">
+            <span onclick="this.closest('.form-section').remove()" class="delete-btn">&times;</span>
+            <div class="form-row">
+              <div style="background-color: #f0f0f0; padding: 6px 12px; border-radius: 4px; border: 1px solid #ddd; font-weight: bold; color: #203864;">${formatted}</div>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function calculateDays() {
+      const startDate = document.getElementById('startDate').value;
+      const endDate = document.getElementById('endDate').value;
+      
+      if (startDate && endDate) {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        const diffTime = Math.abs(end - start);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        const nights = diffDays > 0 ? diffDays - 1 : 0;
+        
+        document.getElementById('daysInfo').textContent = 
+          `(${diffDays} days (${nights} nights))`;
+      }
+    }
+
+    function validateFileNumber() {
+      const fileNumber = document.querySelector("#fileNumber")?.value.trim();
+      if (!fileNumber) {
+        alert("Please enter a File Number before proceeding.");
+        document.querySelector("#fileNumber").focus();
+        return false;
+      }
+      return true;
+    }
+
+    function createFolderStructure() {
+      if (!validateFileNumber()) return;
+      
+      const fileNumber = document.querySelector("#fileNumber")?.value.trim();
+      const folderNumber = fileNumber.replace('#', '');
+      
+      const childFolders = [
+        '1. Invoices from Suppliers',
+        '2. Invoicing to Clients',
+        '3. Proposals',
+        '4. Revenue & Profit margin'
+      ];
+
+      const zip = new JSZip();
+      childFolders.forEach(folder => {
+        zip.folder(folder);
+      });
+
+      zip.generateAsync({type: "blob"})
+        .then(function(content) {
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(content);
+          link.download = `${folderNumber}.zip`;
+          link.click();
+        });
+    }
+
+    function exportAllSectionsToPDF() {
+      if (!validateFileNumber()) return;
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      const fileNumber = document.querySelector("#fileNumber")?.value.trim();
+      
+      // Add header information box
+      const destination = document.querySelector("#destination")?.value || '-';
+      const startDate = document.querySelector("#startDate")?.value || '-';
+      const endDate = document.querySelector("#endDate")?.value || '-';
+      const pax = document.querySelector("#paxCount")?.value || '-';
+      const singles = document.querySelector("#singleRooms")?.value || '-';
+      const doubles = document.querySelector("#doubleRooms")?.value || '-';
+      const clientContact = document.querySelector("#clientContact")?.value || '-';
+
+      doc.setFillColor(245, 245, 245);
+      doc.rect(14, 15, 182, 35, 'F');
+      doc.setFontSize(10);
+      doc.setTextColor(32, 56, 100);
+      doc.text(`File: ${fileNumber}   Destination: ${destination}`, 20, 25);
+      doc.text(`Travel Period: ${startDate} to ${endDate}`, 20, 32);
+      doc.text(`PAX: ${pax}   Single Rooms: ${singles}   Double Rooms: ${doubles}`, 20, 39);
+      doc.text(`Client: ${clientContact}`, 20, 46);
+      
+      let y = 60;  // Start tables after the header box
+
+      // Get all sections
+      const sections = Array.from(document.querySelectorAll('.form-section'));
+      let currentDate = '';
+
+      sections.forEach((section, index) => {
+        const dateDiv = section.querySelector('div[style*="background-color: #f0f0f0"]');
+        if (dateDiv) {
+          if (y > 15) y += 5;
+          currentDate = dateDiv.textContent;
+          
+          // Draw tab background
+          doc.setFillColor(32, 56, 100); // Navy blue
+          doc.rect(14, y - 4, 50, 8, 'F');
+          
+          // Draw tab text
+          doc.setFontSize(10);
+          doc.setTextColor(255, 255, 255); // White text
+          doc.text(currentDate, 16, y);
+          
+          y += 8;
+          return;
+        }
+
+        const input = section.querySelector('input');
+        const select = section.querySelector('select');
+        if (!input || !select || section.classList.contains('room-row')) return;
+
+        // Determine component type based on the placeholder
+        const placeholder = input.getAttribute('placeholder');
+        let componentType = '';
+        let headers = [];
+        
+        if (placeholder.includes('Hotel')) {
+          componentType = 'HOTEL';
+          headers = ['HOTEL', 'ROOM TYPE', 'NIGHTS', 'UNITS', 'PRICE/UNIT', 'TOTAL', 'REMARKS'];
+        } else if (placeholder.includes('Restaurant')) {
+          componentType = 'RESTAURANT';
+          headers = ['RESTAURANT', 'MEAL TYPE', 'NIGHTS', 'UNITS', 'PRICE/UNIT', 'TOTAL', 'REMARKS'];
+        } else if (placeholder.includes('Transport')) {
+          componentType = 'TRANSPORT';
+          headers = ['SERVICE', 'TRANSPORT TYPE', 'NIGHTS', 'UNITS', 'PRICE/UNIT', 'TOTAL', 'REMARKS'];
+        } else if (placeholder.includes('Service')) {
+          componentType = 'SERVICE';
+          headers = ['SERVICE', 'TYPE', 'NIGHTS', 'UNITS', 'PRICE/UNIT', 'TOTAL', 'REMARKS'];
+        } else if (placeholder.includes('Activity')) {
+          componentType = 'ACTIVITY';
+          headers = ['ACTIVITY', 'TYPE', 'NIGHTS', 'UNITS', 'PRICE/UNIT', 'TOTAL', 'REMARKS'];
+        }
+
+        const rows = [];
+        // Add main row
+        rows.push([
+          input.value,
+          select.value,
+          section.querySelector('.nights')?.value || '',
+          section.querySelector('.units')?.value || '',
+          section.querySelector('.price')?.value || '',
+          section.querySelector('.totalInvoice')?.value || '',
+          ''
+        ]);
+
+        // Add room rows (only for hotels)
+        if (componentType === 'HOTEL') {
+          let nextSection = sections[index + 1];
+          while (nextSection && nextSection.classList.contains('room-row')) {
+            const roomSelect = nextSection.querySelector('select');
+            if (roomSelect) {
+              rows.push([
+                '',
+                roomSelect.value,
+                nextSection.querySelector('.nights')?.value || '',
+                nextSection.querySelector('.units')?.value || '',
+                nextSection.querySelector('.price')?.value || '',
+                nextSection.querySelector('.totalInvoice')?.value || '',
+                ''
+              ]);
+            }
+            index++;
+            nextSection = sections[index + 1];
+          }
+        }
+
+        if (rows.length > 0) {
+          doc.autoTable({
+            startY: y,
+            head: [headers],
+            body: rows,
+            theme: 'grid',
+            margin: { left: 14, right: 14 },
+            headStyles: {
+              fillColor: [32, 56, 100],
+              textColor: [255, 255, 255],
+              halign: 'left',
+              fontSize: 7,
+              cellPadding: 2,
+              font: 'helvetica',
+              fontStyle: 'normal',
+              minCellHeight: 6
+            },
+            columnStyles: {
+              0: { cellWidth: 40 },
+              1: { cellWidth: 30 },
+              2: { cellWidth: 20 },
+              3: { cellWidth: 20 },
+              4: { cellWidth: 25 },
+              5: { cellWidth: 25 },
+              6: { cellWidth: 30 }
+            },
+            styles: {
+              fontSize: 7,
+              cellPadding: 2,
+              lineColor: [200, 200, 200],
+              lineWidth: 0.1,
+              halign: 'left',
+              font: 'helvetica',
+              textColor: [60, 60, 60],
+              minCellHeight: 6
+            },
+            didDrawPage: function(data) {
+              y = data.cursor.y + 2;
+            }
+          });
+        }
+      });
+
+      doc.save(`${fileNumber.replace('#', '')}_Client.pdf`);
+    }
+
+    function exportAllSectionsToLandscapePDF() {
+      if (!validateFileNumber()) return;
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF('landscape');
+      const fileNumber = document.querySelector("#fileNumber")?.value.trim();
+      
+      // Add header information box
+      const destination = document.querySelector("#destination")?.value || '-';
+      const startDate = document.querySelector("#startDate")?.value || '-';
+      const endDate = document.querySelector("#endDate")?.value || '-';
+      const pax = document.querySelector("#paxCount")?.value || '-';
+      const singles = document.querySelector("#singleRooms")?.value || '-';
+      const doubles = document.querySelector("#doubleRooms")?.value || '-';
+      const clientContact = document.querySelector("#clientContact")?.value || '-';
+
+      doc.setFillColor(245, 245, 245);
+      doc.rect(14, 15, 270, 35, 'F');
+      doc.setFontSize(10);
+      doc.setTextColor(32, 56, 100);
+      doc.text(`File: ${fileNumber}   Destination: ${destination}`, 20, 25);
+      doc.text(`Travel Period: ${startDate} to ${endDate}`, 20, 32);
+      doc.text(`PAX: ${pax}   Single Rooms: ${singles}   Double Rooms: ${doubles}`, 20, 39);
+      doc.text(`Client: ${clientContact}`, 20, 46);
+      
+      let y = 60;  // Start tables after the header box
+
+      // Get all sections
+      const sections = Array.from(document.querySelectorAll('.form-section'));
+      let currentDate = '';
+
+      sections.forEach((section, index) => {
+        const dateDiv = section.querySelector('div[style*="background-color: #f0f0f0"]');
+        if (dateDiv) {
+          if (y > 15) y += 5;
+          currentDate = dateDiv.textContent;
+          
+          // Draw tab background
+          doc.setFillColor(32, 56, 100); // Navy blue
+          doc.rect(14, y - 4, 50, 8, 'F');
+          
+          // Draw tab text
+          doc.setFontSize(10);
+          doc.setTextColor(255, 255, 255); // White text
+          doc.text(currentDate, 16, y);
+          
+          y += 8;
+          return;
+        }
+
+        const input = section.querySelector('input');
+        const select = section.querySelector('select');
+        if (!input || !select || section.classList.contains('room-row')) return;
+
+        // Determine component type based on the placeholder
+        const placeholder = input.getAttribute('placeholder');
+        let componentType = '';
+        let headers = [];
+        
+        if (placeholder.includes('Hotel')) {
+          componentType = 'HOTEL';
+          headers = ['HOTEL', 'ROOM TYPE', 'NIGHTS', 'UNITS', 'PRICE/UNIT', 'MARKUP %', 'COST + MARKUP', 'PROFIT %', 'TOTAL', 'MARGIN VALUE', 'REMARKS'];
+        } else if (placeholder.includes('Restaurant')) {
+          componentType = 'RESTAURANT';
+          headers = ['RESTAURANT', 'MEAL TYPE', 'NIGHTS', 'UNITS', 'PRICE/UNIT', 'MARKUP %', 'COST + MARKUP', 'PROFIT %', 'TOTAL', 'MARGIN VALUE', 'REMARKS'];
+        } else if (placeholder.includes('Transport')) {
+          componentType = 'TRANSPORT';
+          headers = ['SERVICE', 'TRANSPORT TYPE', 'NIGHTS', 'UNITS', 'PRICE/UNIT', 'MARKUP %', 'COST + MARKUP', 'PROFIT %', 'TOTAL', 'MARGIN VALUE', 'REMARKS'];
+        } else if (placeholder.includes('Service')) {
+          componentType = 'SERVICE';
+          headers = ['SERVICE', 'TYPE', 'NIGHTS', 'UNITS', 'PRICE/UNIT', 'MARKUP %', 'COST + MARKUP', 'PROFIT %', 'TOTAL', 'MARGIN VALUE', 'REMARKS'];
+        } else if (placeholder.includes('Activity')) {
+          componentType = 'ACTIVITY';
+          headers = ['ACTIVITY', 'TYPE', 'NIGHTS', 'UNITS', 'PRICE/UNIT', 'MARKUP %', 'COST + MARKUP', 'PROFIT %', 'TOTAL', 'MARGIN VALUE', 'REMARKS'];
+        }
+
+        const rows = [];
+        // Add main row
+        rows.push([
+          input.value,
+          select.value,
+          section.querySelector('.nights')?.value || '',
+          section.querySelector('.units')?.value || '',
+          section.querySelector('.price')?.value || '',
+          section.querySelector('.markup')?.value || '',
+          section.querySelector('.markupTotal')?.value || '',
+          section.querySelector('.profitMargin')?.value || '',
+          section.querySelector('.totalInvoice')?.value || '',
+          section.querySelector('.marginValue')?.value || '',
+          ''
+        ]);
+
+        // Add room rows (only for hotels)
+        if (componentType === 'HOTEL') {
+          let nextSection = sections[index + 1];
+          while (nextSection && nextSection.classList.contains('room-row')) {
+            const roomSelect = nextSection.querySelector('select');
+            if (roomSelect) {
+              rows.push([
+                '',
+                roomSelect.value,
+                nextSection.querySelector('.nights')?.value || '',
+                nextSection.querySelector('.units')?.value || '',
+                nextSection.querySelector('.price')?.value || '',
+                nextSection.querySelector('.markup')?.value || '',
+                nextSection.querySelector('.markupTotal')?.value || '',
+                nextSection.querySelector('.profitMargin')?.value || '',
+                nextSection.querySelector('.totalInvoice')?.value || '',
+                nextSection.querySelector('.marginValue')?.value || '',
+                ''
+              ]);
+            }
+            index++;
+            nextSection = sections[index + 1];
+          }
+        }
+
+        if (rows.length > 0) {
+          doc.autoTable({
+            startY: y,
+            head: [headers],
+            body: rows,
+            theme: 'grid',
+            margin: { left: 14, right: 14 },
+            headStyles: {
+              fillColor: [32, 56, 100],
+              textColor: [255, 255, 255],
+              halign: 'left',
+              fontSize: 7,
+              cellPadding: 2,
+              font: 'helvetica',
+              fontStyle: 'normal',
+              minCellHeight: 6
+            },
+            columnStyles: {
+              0: { cellWidth: 30 },
+              1: { cellWidth: 30 },
+              2: { cellWidth: 20 },
+              3: { cellWidth: 20 },
+              4: { cellWidth: 25 },
+              5: { cellWidth: 20 },
+              6: { cellWidth: 25 },
+              7: { cellWidth: 20 },
+              8: { cellWidth: 25 },
+              9: { cellWidth: 25 },
+              10: { cellWidth: 30 }
+            },
+            styles: {
+              fontSize: 7,
+              cellPadding: 2,
+              lineColor: [200, 200, 200],
+              lineWidth: 0.1,
+              halign: 'left',
+              font: 'helvetica',
+              textColor: [60, 60, 60],
+              minCellHeight: 6
+            },
+            didDrawPage: function(data) {
+              y = data.cursor.y + 2;
+            }
+          });
+        }
+      });
+
+      doc.save(`${fileNumber.replace('#', '')}_Margin.pdf`);
+    }
+
+    function formatFileNumber(input) {
+      let value = input.value.replace(/\D/g, '');
+      if (value) {
+        input.value = '#' + value;
+      } else {
+        input.value = '';
+      }
+      // Remove error highlight if value is entered
+      if (input.value) {
+        input.style.borderColor = '#ccc';
+      }
+    }
+  </script>
 </head>
 <body>
   <div class="sidebar">
-    <div onclick="exportAllSectionsToPDF()" style="cursor: pointer; margin-bottom: 10px; font-weight: bold; color: #28a745;">📄 Export All to PDF</div>
-        <div onclick="addBlock('Hotel')" style="cursor: pointer; margin-bottom: 10px; font-weight: bold; color: #007BFF;">+ Hotel</div>
-    <div onclick="addBlock('Restaurant')" style="cursor: pointer; margin-bottom: 10px; font-weight: bold; color: #007BFF;">+ Restaurant</div>
-    <div onclick="addBlock('Activity')" style="cursor: pointer; margin-bottom: 10px; font-weight: bold; color: #007BFF;">+ Activity</div>
-    <div onclick="addBlock('Service')" style="cursor: pointer; margin-bottom: 10px; font-weight: bold; color: #007BFF;">+ Liberty Services</div>
-    <div onclick="addBlock('Transport')" style="cursor: pointer; margin-bottom: 10px; font-weight: bold; color: #007BFF;">+ Transport</div>
-    <div onclick="addDivider()" style="cursor: pointer; margin-bottom: 10px; font-weight: bold; color: #28a745;">+ Divider</div>
-    <div onclick="addDateRow()" style="cursor: pointer; margin-bottom: 10px; font-weight: bold; color: #6f42c1;">+ Date Label</div>
-  </div>
-  <div class="content" id="formContainer">
-    <div class="form-row" style="margin-bottom: 20px;"><input type="text" placeholder="Enter File Number" style="font-size: 1.5em; padding: 10px; width: 100%;"></div>
-  </div>
-<script>
-function addDivider() {
-  const container = document.getElementById('formContainer');
-  const wrapper = document.createElement('div');
-  wrapper.className = 'form-section';
-  wrapper.innerHTML = `
-    <div style="position: relative;">
-      <span onclick="this.closest('.form-section').remove()" style="position: absolute; top: -10px; right: -10px; background: #dc3545; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: bold;">&times;</span>
-      <hr style="margin: 0; border: none; border-top: 1px solid #ccc;">
-    </div>
-  `;
-  container.appendChild(wrapper);
-}
-
-function addDateRow() {
-  const container = document.getElementById('formContainer');
-  const wrapper = document.createElement('div');
-  wrapper.className = 'form-section';
-  wrapper.innerHTML = `
-    <div style="position: relative;">
-      <span onclick="this.closest('.form-section').remove()" style="position: absolute; top: -10px; right: -10px; background: #dc3545; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: bold;">&times;</span>
-      <div class="form-row">
-        <input type="date" onchange="convertDateToLabel(this)" style="flex: 0 0 auto; max-width: 200px; font-weight: bold;">
+    <div class="sidebar-main">
+      <div onclick="addDivider()" class="sidebar-btn green">
+        <i class="fas fa-minus"></i> Divider
+      </div>
+      <div onclick="addDateRow()" class="sidebar-btn purple">
+        <i class="fas fa-calendar-alt"></i> Date Label
+      </div>
+      <div onclick="addBlock('Hotel')" class="sidebar-btn blue">
+        <i class="fas fa-hotel"></i> Hotel
+      </div>
+      <div onclick="addBlock('Restaurant')" class="sidebar-btn blue">
+        <i class="fas fa-utensils"></i> Restaurant
+      </div>
+      <div onclick="addBlock('Activity')" class="sidebar-btn blue">
+        <i class="fas fa-hiking"></i> Activity
+      </div>
+      <div onclick="addBlock('Service')" class="sidebar-btn blue">
+        <i class="fas fa-concierge-bell"></i> Liberty Services
+      </div>
+      <div onclick="addBlock('Transport')" class="sidebar-btn blue">
+        <i class="fas fa-shuttle-van"></i> Transport
       </div>
     </div>
-  `;
-  container.appendChild(wrapper);
-}
-
-function convertDateToLabel(input) {
-  const date = new Date(input.value);
-  if (!isNaN(date)) {
-    const options = { day: 'numeric', month: 'long', year: 'numeric' };
-    const formatted = date.toLocaleDateString('en-GB', options);
-    const section = input.closest('.form-section');
-    section.innerHTML = `
-      <div style="position: relative;">
-        <span onclick="this.closest('.form-section').remove()" style="position: absolute; top: -10px; right: -10px; background: #dc3545; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: bold;">&times;</span>
-        <div class="form-row">
-          <strong style='font-size: 1.2em;'>${formatted}</strong>
+    <div class="sidebar-footer">
+      <div onclick="createFolderStructure()" class="sidebar-btn purple">
+        <i class="fas fa-download"></i> Download Folder
+      </div>
+      <div onclick="exportAllSectionsToPDF()" class="sidebar-btn green">
+        <i class="fas fa-file-export"></i> Export for External
+      </div>
+      <div onclick="exportAllSectionsToLandscapePDF()" class="sidebar-btn green">
+        <i class="fas fa-file-invoice"></i> Export for Internal
+      </div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="header">
+      <i class="fas fa-project-diagram"></i>
+      <h1>Project Manager Dashboard</h1>
+    </div>
+    <div class="main-content" id="formContainer">
+      <div class="form-header">
+        <div class="form-header-row">
+          <input type="text" id="fileNumber" placeholder="File Number" oninput="formatFileNumber(this)" pattern="[0-9]*" inputmode="numeric">
+          <select id="destination" style="flex: 1; max-width: 200px;">
+            <option value="">Select Destination</option>
+            <optgroup label="Sweden - Lapland & North">
+              <option value="SE,Swedish Lapland">SE,Swedish Lapland</option>
+              <option value="SE,Kiruna">SE,Kiruna</option>
+              <option value="SE,Abisko">SE,Abisko</option>
+              <option value="SE,Gällivare">SE,Gällivare</option>
+              <option value="SE,Jokkmokk">SE,Jokkmokk</option>
+              <option value="SE,Luleå">SE,Luleå</option>
+              <option value="SE,Umeå">SE,Umeå</option>
+              <option value="SE,Skellefteå">SE,Skellefteå</option>
+            </optgroup>
+            <optgroup label="Sweden - Central & South">
+              <option value="SE,Stockholm">SE,Stockholm</option>
+              <option value="SE,Gothenburg">SE,Gothenburg</option>
+              <option value="SE,Malmö">SE,Malmö</option>
+              <option value="SE,Uppsala">SE,Uppsala</option>
+              <option value="SE,Östersund">SE,Östersund</option>
+              <option value="SE,Åre">SE,Åre</option>
+              <option value="SE,Sundsvall">SE,Sundsvall</option>
+              <option value="SE,Västerås">SE,Västerås</option>
+            </optgroup>
+            <optgroup label="Norway - Arctic & North">
+              <option value="NO,Norwegian Lapland">NO,Norwegian Lapland</option>
+              <option value="NO,Tromsø">NO,Tromsø</option>
+              <option value="NO,Alta">NO,Alta</option>
+              <option value="NO,Kirkenes">NO,Kirkenes</option>
+              <option value="NO,Hammerfest">NO,Hammerfest</option>
+              <option value="NO,Bodø">NO,Bodø</option>
+              <option value="NO,Narvik">NO,Narvik</option>
+              <option value="NO,Lofoten Islands">NO,Lofoten Islands</option>
+              <option value="NO,Svalbard">NO,Svalbard</option>
+              <option value="NO,Longyearbyen">NO,Longyearbyen</option>
+            </optgroup>
+            <optgroup label="Norway - South">
+              <option value="NO,Oslo">NO,Oslo</option>
+              <option value="NO,Bergen">NO,Bergen</option>
+              <option value="NO,Trondheim">NO,Trondheim</option>
+              <option value="NO,Stavanger">NO,Stavanger</option>
+              <option value="NO,Ålesund">NO,Ålesund</option>
+              <option value="NO,Kristiansand">NO,Kristiansand</option>
+            </optgroup>
+            <optgroup label="Denmark & Territories">
+              <option value="DK,Copenhagen">DK,Copenhagen</option>
+              <option value="DK,Aarhus">DK,Aarhus</option>
+              <option value="DK,Odense">DK,Odense</option>
+              <option value="DK,Aalborg">DK,Aalborg</option>
+              <option value="DK,Faroe Islands">DK,Faroe Islands</option>
+              <option value="DK,Nuuk,Greenland">DK,Nuuk,Greenland</option>
+              <option value="DK,Ilulissat,Greenland">DK,Ilulissat,Greenland</option>
+              <option value="DK,Kangerlussuaq,Greenland">DK,Kangerlussuaq,Greenland</option>
+            </optgroup>
+          </select>
+          <div class="date-range">
+            <input type="date" id="startDate" onchange="calculateDays()">
+            <span>to</span>
+            <input type="date" id="endDate" onchange="calculateDays()">
+            <span id="daysInfo" class="date-info">(0 days (0 nights))</span>
+          </div>
+        </div>
+        <div class="form-header-row">
+          <div class="rooms-section">
+            <input type="number" id="paxCount" min="1" placeholder="PAX">
+            <input type="number" id="singleRooms" min="0" placeholder="Single Rooms">
+            <input type="number" id="doubleRooms" min="0" placeholder="Double Rooms">
+          </div>
+          <textarea id="clientContact" rows="1" placeholder="Client Contact Details"></textarea>
         </div>
       </div>
-    `;
-  }
-}
-
-function exportAllSectionsToPDF() {
-  function determineType(placeholder) {
-    if (placeholder.includes('Hotel')) return 'Hotel';
-    if (placeholder.includes('Restaurant')) return 'Restaurant';
-    if (placeholder.includes('Activity')) return 'Activity';
-    if (placeholder.includes('Service')) return 'Liberty Service';
-    if (placeholder.includes('Transport')) return 'Transport';
-    return '';
-  }
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-  const fileNumber = document.querySelector("input[placeholder='Enter File Number']")?.value.trim() || 'program';
-  const types = [
-    { label: 'Hotels', match: 'Hotel Name' },
-    { label: 'Restaurants', match: 'Restaurant Name' },
-    { label: 'Activities', match: 'Activity Name' },
-    { label: 'Liberty Services', match: 'Service Name' },
-    { label: 'Transport', match: 'Transport Service' }
-  ];
-
-  let y = 20;
-let lastCategory = '';
-
-  document.querySelectorAll('.form-section').forEach(section => {
-    const input = section.querySelector('input');
-    const select = section.querySelector('select');
-    const nights = section.querySelector('.nights')?.value || '';
-    const units = section.querySelector('.units')?.value || '';
-    const price = section.querySelector('.price')?.value || '';
-    const total = section.querySelector('.totalInvoice')?.value || '';
-    const remarks = '';
-
-    if (input && select) {
-      if (lastCategory !== determineType(input.placeholder)) {
-        doc.autoTable({
-        startY: y,
-        body: [[input.value, select.value, nights, units, price, total, remarks]],
-          body: [],
-          styles: { fontSize: 10, cellPadding: 2, overflow: 'linebreak' },
-          theme: 'striped',
-          tableLineColor: 220,
-          tableLineWidth: 0.1,
-          margin: { top: 10 },
-        });
-        y = doc.lastAutoTable.finalY;
-        lastCategory = determineType(input.placeholder);
-      }
-      doc.autoTable({
-        startY: y,
-        head: [[determineType(input.placeholder).toUpperCase(), "TYPE", "NIGHTS", "UNITS", "PRICE/UNIT", "TOTAL", "REMARKS"]],
-        body: [[input.value, select.value, nights, units, price, total, remarks]],
-        styles: { fontSize: 10, cellPadding: 2, overflow: 'linebreak' },
-        theme: 'striped',
-        tableLineColor: 220,
-        tableLineWidth: 0.1,
-        margin: { top: 10 },
-      });
-      y = doc.lastAutoTable.finalY + 4;
-      section.previousIsTable = true;
-    } else if (section.querySelector('strong')) {
-      doc.setFontSize(12);
-      doc.setTextColor(40);
-      doc.setFillColor(240,240,240);
-doc.rect(14, y - 5, 182, 8, 'F');
-doc.setFont(undefined, 'bold');
-doc.text(`${section.querySelector('strong').textContent}`, 16, y);
-doc.setFont(undefined, 'normal');
-      y += 8;
-      section.previousIsTable = false;
-    } else if (section.querySelector('hr')) {
-      doc.setDrawColor(180);
-      doc.line(14, y, 196, y);
-      y += 8;
-      section.previousIsTable = false;
-    }
-  });
-  doc.save(`${fileNumber}.pdf`);
-}
-</script>
+    </div>
+  </div>
 </body>
 </html>
